@@ -321,7 +321,6 @@ TreeNode * parse(void)
 { TreeNode * t;
   token = getToken();
   t = program();
-  //t = stmt_sequence();
   if (token!=ENDFILE)
     syntaxError("Code ends before file\n");
   return t;
