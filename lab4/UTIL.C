@@ -34,6 +34,13 @@ void printToken( TokenType token, const char* tokenString )
 	case STRING:
 	case DO:
 	case WHILE: 
+    case FOR:
+    case TO:
+    case DOWNTO:
+    case SWITCH:
+    case CASE:
+    case BREAK:
+    case DEFAULT:
        fprintf(listing,
          "reserved word: %s\n",tokenString);
 		 break;
@@ -207,6 +214,27 @@ void printTree( TreeNode * tree )
             break;
         case WhileK:
             fprintf(listing, "While\n");
+            break;
+        case ForK:
+            fprintf(listing, "For\n");
+            break;
+        case ToK:
+            fprintf(listing, "To\n");
+            break;
+        case DownK:
+            fprintf(listing, "Downto\n");
+            break;
+        case SwitchK:
+            fprintf(listing, "Switch\n");
+            break;
+        case CaseK:
+            fprintf(listing, "Case\n");
+            break;
+        case BreakK:
+            fprintf(listing, "Break\n");
+            break;
+        case DefaultK:
+            fprintf(listing, "Default\n");
             break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");

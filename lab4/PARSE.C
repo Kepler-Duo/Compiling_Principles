@@ -29,6 +29,10 @@ static TreeNode * decl_stmt(void);
 static TreeNode * declarations(void);
 static TreeNode * while_stmt(void);
 static TreeNode * program(void);
+static TreeNode * for_stmt(void);
+static TreeNode * to_stmt(void);
+static TreeNode * switch_stmt(void);
+static TreeNode * case_stmt(void);
 
 
 static void syntaxError(char * message)
@@ -51,7 +55,7 @@ TreeNode* program(void)
     TreeNode* t = newProgNode();
     t->child[0] = declarations();
     t->child[1] = stmt_sequence();
-    return t;
+    //return t;
 }
 
 TreeNode * stmt_sequence(void)
@@ -59,7 +63,7 @@ TreeNode * stmt_sequence(void)
   TreeNode * t = statement();
   TreeNode * p = t;
   while ((token!=ENDFILE) && (token!=END) &&
-         (token!=ELSE) && (token!=UNTIL) && (token!=WHILE))
+         (token!=ELSE) && (token!=UNTIL) && (token!=WHILE) && (token!=BREAK))
   { TreeNode * q;
     match(SEMI);
     q = statement();
@@ -93,6 +97,8 @@ TreeNode * statement(void)
     case READ : t = read_stmt(); break;
     case WRITE : t = write_stmt(); break;
     case DO: t = while_stmt();break;
+    case FOR: t = for_stmt();break;
+    case SWITCH: t = switch_stmt();break;
 
     default : syntaxError("unexpected token -> ");
               printToken(token,tokenString);
@@ -178,6 +184,39 @@ TreeNode* while_stmt(void)
     return t;
 }
 
+TreeNode* for_stmt(void)
+{
+    TreeNode* t = newStmtNode(ForK);
+    match(FOR);
+    if (t != NULL) {
+        t->child[0] = assign_stmt();
+        t->child[1] = to_stmt();
+    }
+    match(THEN);
+    t->child[2] = stmt_sequence();
+    match(END);
+    return t;
+}
+
+TreeNode* to_stmt(void)
+{
+    TreeNode* t = NULL;
+    if (token == TO){
+        t = newStmtNode(ToK);
+        match(TO);
+        if (t != NULL)
+            t->child[0] = factor();
+    }
+    else {
+        t = newStmtNode(DownK);
+        match(DOWNTO);
+        if (t != NULL)
+            t->child[0] = factor();
+    }
+    return t;
+}
+
+
 TreeNode * if_stmt(void)
 { TreeNode * t = newStmtNode(IfK);
     
@@ -193,6 +232,36 @@ TreeNode * if_stmt(void)
   }
   match(END);
   return t;
+}
+
+TreeNode* switch_stmt(void)
+{
+    TreeNode* t = newStmtNode(SwitchK);
+
+    match(SWITCH);
+    if (t != NULL) t->child[0] = factor();
+    t->child[1] = case_stmt();
+  
+    return t;
+}
+
+TreeNode* case_stmt(void)
+{
+    TreeNode* t = newStmtNode(CaseK);
+    TreeNode* p = t;
+    match(CASE);
+    t->child[0] = factor();
+    t->child[1] = stmt_sequence();
+    match(BREAK);
+    if (token == CASE) 
+        p->sibling = case_stmt();
+    if (token == DEFAULT) {
+        TreeNode* q = newStmtNode(DefaultK);
+        match(DEFAULT);
+        q->child[0] = stmt_sequence();
+        p->sibling = q;
+    }
+    return t;
 }
 
 TreeNode * repeat_stmt(void)

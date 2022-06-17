@@ -68,7 +68,14 @@ static struct
 	{"string",STRING},
 	{"bool",BOOL},
 	{"do",DO},
-	{"while",WHILE}
+	{"while",WHILE},
+    {"for",FOR},
+    {"to",TO},
+    {"downto",DOWNTO},
+    {"default",DEFAULT},
+    {"break",BREAK},
+    {"switch",SWITCH},
+    {"case",CASE},
 	};
 
 /* lookup an identifier to see if it is a reserved word */
