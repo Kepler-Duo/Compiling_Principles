@@ -55,7 +55,7 @@ TreeNode* program(void)
     TreeNode* t = newProgNode();
     t->child[0] = declarations();
     t->child[1] = stmt_sequence();
-    //return t;
+    return t;
 }
 
 TreeNode * stmt_sequence(void)
